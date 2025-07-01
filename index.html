@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الكومبو الثقافية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            --primary: #4cc3cb;
+            --secondary: #eab44a;
+            --accent: #8e44ad;
+            --light: #f5f9fa;
+            --dark: #1a5e66;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --info: #3498db;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #1a5e66 0%, #2c8a94 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20,20 Q40,5 60,20 T100,20 Q85,40 100,60 T100,100 Q60,85 20,100 T0,100 Q5,60 0,20 T20,20" fill="none" stroke="%233a9aa4" stroke-width="0.5" opacity="0.3"/></svg>');
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: rgba(26, 94, 102, 0.92);
+            border-radius: 20px;
+            border: 3px solid var(--secondary);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><path d="M30,30 Q50,15 70,30 T110,30 Q95,50 110,70 T110,110 Q70,95 30,110 T0,110 Q15,70 0,30 T30,30" fill="none" stroke="%23eab44a" stroke-width="1" opacity="0.15"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        header {
+            text-align: left;
+            padding: 25px 40px 15px;
+            background: linear-gradient(to right, var(--dark), #2c8a94);
+            border-bottom: 3px solid var(--secondary);
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--secondary), #d9a23d);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid var(--light);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo i {
+            font-size: 50px;
+            color: var(--dark);
+        }
+        
+        .logo-text {
+            margin-right: 15px;
+            text-align: right;
+        }
+        
+        .logo-text h1 {
+            font-size: 2.5rem;
+            color: var(--light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .screen {
+            padding: 30px;
+            display: none;
+            min-height: 500px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .setup-screen {
+            text-align: center;
+        }
+        
+        .setup-screen h2 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--secondary);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .setup-screen h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, var(--secondary), transparent);
+            border-radius: 3px;
+        }
+        
+        .input-group {
+            margin: 25px auto;
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            background: rgba(44, 138, 148, 0.5);
+            color: var(--light);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(234, 180, 74, 0.3);
+        }
+        
+        .btn {
+            /*display: inline-block;*/
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-family: inherit;
+            background: linear-gradient(to bottom, var(--secondary), #d9a23d);
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--light);
+            position: relative;
+            overflow: hidden;
+        }
+        .btnH {
+            display: none;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.5s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to bottom, #efc15f, #e0a83f);
+        }
+        
+        .btn:hover::after {
+            left: 120%;
+        }
+        
+        .btn:active {
+            transform: translateY(2px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to bottom, #2c8a94, var(--dark));
+            color: var(--light);
+        }
+        
+        .game-screen {
+            text-align: center;
+        }
+        
+        .groups-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .group {
+            background: linear-gradient(135deg, var(--dark) 0%, #2c8a94 100%);
+            border: 3px solid var(--secondary);
+            border-radius: 18px;
+            padding: 20px;
+            width: 240px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .group.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--secondary);
+            z-index: 10;
+        }
+        
+        .group h3 {
+            font-size: 1.6rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 8px;
+        }
+        
+        .points-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .group .points {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            min-width: 70px;
+        }
+        
+        .negative {
+            color: #ff9999 !important;
+        }
+        
+        .temp-points {
+            font-size: 1.4rem;
+            color: var(--secondary);
+            margin-top: 10px;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+        
+        .points-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .points-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--light);
+            background: var(--secondary);
+            color: var(--dark);
+            font-weight: bold;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .points-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .points-btn.minus {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .question-container {
+            background: rgba(26, 94, 102, 0.7);
+            border: 3px solid var(--secondary);
+            border-radius: 18px;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .question-header {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .question-header i {
+            font-size: 2rem;
+        }
+        
+        .question-text {
+            font-size: 1.7rem;
+            line-height: 1.6;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(44, 138, 148, 0.3);
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed rgba(234, 180, 74, 0.4);
+        }
+        
+        .question-level {
+            font-size: 1.3rem;
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 8px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .game-btn {
+            padding: 20px 40px;
+            font-size: 1.5rem; /* زيادة حجم الخط */
+            min-width: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700; /* زيادة سماكة الخط */
+            letter-spacing: 1px; /* تحسين المسافات بين الحروف */
+        }
+        
+        .correct-btn {
+            background: linear-gradient(to bottom, var(--success), #27ae60);
+        }
+        
+        .wrong-btn {
+            background: linear-gradient(to bottom, var(--danger), #c0392b);
+        }
+        
+        .choice-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .deduction-screen {
+            background: rgba(26, 94, 102, 0.9);
+            border: 3px solid var(--secondary);
+            border-radius: 18px;
+            padding: 30px;
+            max-width: 700px;
+            margin: 30px auto;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .deduction-screen h3 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .deduction-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        
+        .deduction-btn {
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            color: #f5f9fa;
+            background: linear-gradient(to bottom, var(--accent), #ac37ff);
+        }
+        
+        .questions-screen {
+            text-align: center;
+        }
+        
+        .questions-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: rgba(26, 94, 102, 0.7);
+            border-radius: 18px;
+            padding: 25px;
+            border: 3px solid var(--secondary);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .add-question-form {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .add-question-form input, .add-question-form select {
+            padding: 15px;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            background: rgba(44, 138, 148, 0.5);
+            color: var(--light);
+            font-size: 1.1rem;
+            font-family: inherit;
+        }
+        
+        .questions-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid var(--secondary);
+            border-radius: 15px;
+            padding: 15px;
+            background: rgba(44, 138, 148, 0.3);
+        }
+        
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 12px 0;
+            background: rgba(26, 94, 102, 0.5);
+            border-radius: 12px;
+            border-left: 5px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .question-item:hover {
+            transform: translateX(-5px);
+            background: rgba(26, 94, 102, 0.7);
+        }
+        
+        .question-content {
+            flex: 1;
+            text-align: right;
+            padding: 0 20px;
+            font-size: 1.2rem;
+        }
+        
+        .question-level-badge {
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            min-width: 100px;
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .info-box {
+            background: rgba(234, 180, 74, 0.2);
+            border: 2px solid var(--secondary);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            text-align: right;
+        }
+        
+        .info-box h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-box ul {
+            padding-right: 25px;
+            line-height: 1.8;
+            font-size: 1.2rem;
+        }
+        
+        .info-box li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-right: 25px;
+        }
+        
+        .info-box li::before {
+            content: "•";
+            color: var(--secondary);
+            font-size: 1.5rem;
+            position: absolute;
+            right: 0;
+            top: -3px;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 1.1rem;
+            color: rgba(245, 249, 250, 0.7);
+            border-top: 1px solid rgba(234, 180, 74, 0.3);
+        }
+        
+        .group-names {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .group-name-input {
+            padding: 12px 15px;
+            font-size: 1.1rem;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            background: rgba(44, 138, 148, 0.5);
+            color: var(--light);
+            width: 200px;
+            text-align: center;
+        }
+        
+       
+        
+        @media (max-width: 900px) {
+            .groups-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .group {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .game-controls, .choice-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .add-question-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+            }
+            
+            .logo-text {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .question-text {
+                font-size: 1.4rem;
+                min-height: 120px;
+            }
+            
+            .game-btn {
+                min-width: 100%;
+                padding: 18px;
+                font-size: 1.3rem;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .logo i {
+                font-size: 40px;
+            }
+            
+            .logo-text h1 {
+                font-size: 2rem;
+            }
+            
+            .group-name-input {
+                width: 100%;
+            }
+            
+            .points-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* Animation for points change */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .points-change {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        
+        .bounce {
+            animation: bounce 1s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sound-toggle" id="soundToggle">
+            </div>
+        
+        <header>
+            <div class="logo-container">
+                <div class="logo-text">
+                    <h1>لعبة الكومبو الثقافية</h1>
+                    <p>منار المصلحين - جيل الأمل</p>
+                </div>
+                <div>
+                   <img src="/img/logo.png" alt="" height="45%" width="45%">
+                </div>
+            </div>
+        </header>
+        
+        <div id="setupScreen" class="screen active">
+            <div class="setup-screen">
+                <h2><i class="fas fa-cog"></i> إعداد اللعبة</h2>
+                
+                <div class="input-group">
+                    <label for="groupCount"><i class="fas fa-users"></i> عدد المجموعات</label>
+                    <input type="number" id="groupCount" min="2" max="6" value="3">
+                </div>
+                
+                <div class="input-group">
+                    <label for="initialPoints"><i class="fas fa-star"></i> النقاط الابتدائية</label>
+                    <input type="number" id="initialPoints" min="5" value="10">
+                </div>
+                
+                <div class="input-group">
+                    <label for="deductionPoints"><i class="fas fa-minus-circle"></i> نقاط الخصم</label>
+                    <input type="number" id="deductionPoints" min="5" value="15">
+                </div>
+                
+                <div id="groupNamesContainer" style="display: none;">
+                    <div class="input-group">
+                        <label><i class="fas fa-font"></i> أسماء المجموعات</label>
+                        <div class="group-names" id="groupNames">
+                            <!-- سيتم إنشاء حقول أسماء المجموعات هنا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i> قوانين اللعبة</h3>
+                    <ul>
+                        <li>تبدأ كل مجموعة بسؤال ابتدائي بقيمة النقاط الابتدائية</li>
+                        <li>عند الإجابة الصحيحة، يمكن للمجموعة اختيار أخذ النقاط أو الانتقال لسؤال بقيمة مضاعفة</li>
+                        <li>في حالة الإجابة الخاطئة على السؤال المضاعف، تخسر المجموعة النقاط المؤقتة فقط</li>
+                        <li>إذا وصلت المجموعة للسؤال الثالث وأجابت إجابة صحيحة، يمكنها خصم نقاط من مجموعة أخرى</li>
+                        <li>يمكن أن تصبح نقاط المجموعة أقل من الصفر في حالة الخصم</li>
+                    </ul>
+                </div>
+                
+                <button id="startGame" class="btn"><i class="fas fa-play"></i> بدء اللعبة</button>
+                <button id="manageQuestions" class="btn btn-secondary"><i class="fas fa-question-circle"></i> إدارة الأسئلة</button>
+            </div>
+        </div>
+        
+        <div id="gameScreen" class="screen">
+            <div class="game-screen">
+                <div class="groups-container" id="groupsContainer">
+                    <!-- سيتم إنشاء المجموعات ديناميكيًا هنا -->
+                </div>
+                
+                <div class="question-container">
+                    <div class="question-header">
+                        <i class="fas fa-question-circle"></i>
+                        السؤال الحالي
+                    </div>
+                    <div class="question-text" id="currentQuestion">يتم عرض السؤال هنا</div>
+                    <div class="question-level">المستوى: <span id="currentLevel">1</span></div>
+                </div>
+                
+                <div class="game-controls" id="answerControls">
+                    <button id="correctAnswer" class="game-btn correct-btn">
+                        <i class="fas fa-check-circle"></i> إجابة صحيحة
+                    </button>
+                    <button id="wrongAnswer" class="game-btn wrong-btn">
+                        <i class="fas fa-times-circle"></i> إجابة خاطئة
+                    </button>
+                </div>
+                
+                <div class="choice-buttons" id="choiceButtons" style="display: none;">
+                    <button id="takePoints" class="btn">
+                        <i class="fas fa-coins"></i> أخذ النقاط (<span id="tempPointsValue">0</span>)
+                    </button>
+                    <button id="nextQuestion" class="btn">
+                        <i class="fas fa-arrow-right"></i> الانتقال للسؤال التالي
+                    </button>
+                </div>
+                
+                <div id="deductionScreen" class="deduction-screen" style="display: none;">
+                    <h3><i class="fas fa-trophy"></i> مبروك! لقد وصلت للسؤال الثالث وأجبت إجابة صحيحة</h3>
+                    <p>يمكنك الآن خصم <span id="deductionValue" class="question-level-badge">15</span> نقطة من إحدى المجموعات</p>
+                    <div class="deduction-options" id="deductionOptions">
+                        <!-- سيتم إنشاء خيارات المجموعات هنا -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 30px;">
+                    <button id="backToSetup" class="btn btn-secondary">
+                        <i class="fas fa-cog"></i> العودة للإعدادات
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="questionsScreen" class="screen">
+            <div class="questions-screen">
+                <h2><i class="fas fa-question-circle"></i> إدارة الأسئلة</h2>
+                
+                <div class="add-question-form">
+                    <input type="text" id="newQuestion" placeholder="أدخل السؤال الجديد">
+                    <select id="questionLevel">
+                        <option value="1">المستوى 1</option>
+                        <option value="2">المستوى 2</option>
+                        <option value="3">المستوى 3</option>
+                    </select>
+                    <button id="addQuestion" class="btn"><i class="fas fa-plus"></i> إضافة السؤال</button>
+                </div>
+                
+                <div class="questions-container">
+                    <h3>الأسئلة المضافة</h3>
+                    <div class="questions-list" id="questionsList">
+                        <!-- سيتم عرض الأسئلة هنا -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 30px;">
+                    <button id="backToGameFromQuestions" class="btn" class= "btnH"disabled hidden>
+                        <i class="fas fa-play"></i> العودة للعبة
+                    </button>
+                    <button id="backToSetupFromQuestions" class="btn btn-secondary">
+                        <i class="fas fa-cog"></i> العودة للإعدادات
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            <p>ألعاب منار المصلحين - جيل الأمل</p>
+        </div>
+        
+        <!-- عناصر الصوت -->
+        <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+        <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+        <audio id="pointsSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3"></audio>
+        <audio id="deductSound" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
+        <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-a-coin-video-game-2067.mp3"></audio>
+    </div>
+    
+    <script>
+        // حالة اللعبة
+        const state = {
+            groups: [],
+            questions: {
+                1: [],
+                2: [],
+                3: []
+            },
+            currentGroup: 0,
+            currentLevel: 1,
+            initialPoints: 10,
+            deductionPoints: 15,
+            gameStarted: false,
+            tempPoints: 0, // النقاط المؤقتة في التسلسل الحالي
+            soundEnabled: true
+        };
+        
+        // عناصر DOM
+        const setupScreen = document.getElementById('setupScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const questionsScreen = document.getElementById('questionsScreen');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const currentQuestion = document.getElementById('currentQuestion');
+        const currentLevel = document.getElementById('currentLevel');
+        const choiceButtons = document.getElementById('choiceButtons');
+        const deductionScreen = document.getElementById('deductionScreen');
+        const deductionOptions = document.getElementById('deductionOptions');
+        const deductionValue = document.getElementById('deductionValue');
+        const questionsList = document.getElementById('questionsList');
+        const answerControls = document.getElementById('answerControls');
+        const tempPointsValue = document.getElementById('tempPointsValue');
+        const groupNamesContainer = document.getElementById('groupNamesContainer');
+        const groupNames = document.getElementById('groupNames');
+        const soundToggle = document.getElementById('soundToggle');
+        
+        // عناصر الصوت
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const pointsSound = document.getElementById('pointsSound');
+        const deductSound = document.getElementById('deductSound');
+        const winSound = document.getElementById('winSound');
+        
+        // تهيئة اللعبة
+        document.getElementById('startGame').addEventListener('click', startGame);
+        document.getElementById('manageQuestions').addEventListener('click', showQuestionsScreen);
+        document.getElementById('backToSetup').addEventListener('click', showSetupScreen);
+        document.getElementById('backToGameFromQuestions').addEventListener('click', showGameScreen);
+        document.getElementById('backToSetupFromQuestions').addEventListener('click', showSetupScreen);
+        document.getElementById('correctAnswer').addEventListener('click', handleCorrectAnswer);
+        document.getElementById('wrongAnswer').addEventListener('click', handleWrongAnswer);
+        document.getElementById('takePoints').addEventListener('click', takePoints);
+        document.getElementById('nextQuestion').addEventListener('click', nextQuestion);
+        document.getElementById('addQuestion').addEventListener('click', addQuestion);
+        document.getElementById('groupCount').addEventListener('change', generateGroupNameInputs);
+        soundToggle.addEventListener('click', toggleSound);
+        
+        // بدء اللعبة
+        function startGame() {
+            const groupCount = parseInt(document.getElementById('groupCount').value);
+            state.initialPoints = parseInt(document.getElementById('initialPoints').value);
+            state.deductionPoints = parseInt(document.getElementById('deductionPoints').value);
+            
+            // جمع أسماء المجموعات
+            const groupNames = [];
+            document.querySelectorAll('.group-name-input').forEach(input => {
+                groupNames.push(input.value || `المجموعة ${groupNames.length + 1}`);
+            });
+            
+            // إنشاء المجموعات
+            state.groups = [];
+            for (let i = 0; i < groupCount; i++) {
+                state.groups.push({
+                    id: i,
+                    name: groupNames[i] || `المجموعة ${i+1}`,
+                    points: 0
+                });
+            }
+            
+            state.currentGroup = 0;
+            state.currentLevel = 1;
+            state.tempPoints = 0;
+            state.gameStarted = true;
+            
+            // عرض المجموعات
+            renderGroups();
+            
+            // عرض السؤال الحالي
+            showCurrentQuestion();
+            
+            // الانتقال لشاشة اللعب
+            showGameScreen();
+        }
+        
+        // توليد حقول أسماء المجموعات
+        function generateGroupNameInputs() {
+            const groupCount = parseInt(document.getElementById('groupCount').value);
+            groupNames.innerHTML = '';
+            
+            if (groupCount > 0) {
+                groupNamesContainer.style.display = 'block';
+                
+                for (let i = 0; i < groupCount; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'group-name-input';
+                    input.placeholder = `اسم المجموعة ${i+1}`;
+                    input.value = `المجموعة ${i+1}`;
+                    groupNames.appendChild(input);
+                }
+            } else {
+                groupNamesContainer.style.display = 'none';
+            }
+        }
+        
+        // عرض المجموعات مع أزرار التحكم
+        function renderGroups() {
+            groupsContainer.innerHTML = '';
+            
+            state.groups.forEach((group, index) => {
+                const groupElement = document.createElement('div');
+                groupElement.className = `group ${index === state.currentGroup ? 'active' : ''}`;
+                
+                // تحديد إذا كانت النقاط سالبة
+                const pointsClass = group.points < 0 ? 'negative' : '';
+                
+                groupElement.innerHTML = `
+                    <h3>${group.name}</h3>
+                    <div class="points-container">
+                        <div class="points ${pointsClass}">${group.points}</div>
+                        <div class="points-controls">
+                            <button class="points-btn plus" data-index="${index}">+5</button>
+                            <button class="points-btn minus" data-index="${index}">-5</button>
+                        </div>
+                    </div>
+                    ${index === state.currentGroup && state.tempPoints > 0 ? 
+                        `<div class="temp-points">نقاط مؤقتة: +${state.tempPoints}</div>` : ''}
+                `;
+                groupsContainer.appendChild(groupElement);
+            });
+            
+            // إضافة معالجات الأحداث لأزرار التحكم بالنقاط
+            document.querySelectorAll('.points-btn.plus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    state.groups[index].points += 5;
+                    renderGroups();
+                    playSound(pointsSound);
+                });
+            });
+            
+            document.querySelectorAll('.points-btn.minus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    state.groups[index].points -= 5;
+                    renderGroups();
+                    playSound(deductSound);
+                });
+            });
+        }
+        
+        // عرض السؤال الحالي
+        function showCurrentQuestion() {
+            currentLevel.textContent = state.currentLevel;
+            
+            // البحث عن سؤال عشوائي من المستوى الحالي
+            const levelQuestions = state.questions[state.currentLevel];
+            if (levelQuestions.length > 0) {
+                const randomIndex = Math.floor(Math.random() * levelQuestions.length);
+                currentQuestion.textContent = levelQuestions[randomIndex];
+            } else {
+                currentQuestion.textContent = "اسأل المجموعة سؤالاً شفوياً";
+            }
+            
+            // إخفاء خيارات أخذ النقاط والانتقال
+            choiceButtons.style.display = 'none';
+            deductionScreen.style.display = 'none';
+            answerControls.style.display = 'flex';
+            
+            // إظهار النقاط المؤقتة
+            tempPointsValue.textContent = state.tempPoints;
+        }
+        
+        // معالجة الإجابة الصحيحة
+        function handleCorrectAnswer() {
+            playSound(correctSound);
+            
+            // حساب النقاط للمستوى الحالي
+            const pointsToAdd = state.initialPoints * Math.pow(2, state.currentLevel - 1);
+            state.tempPoints += pointsToAdd;
+            
+            // تحديث عرض المجموعات
+            renderGroups();
+            
+            // إذا وصلنا للمستوى الثالث
+            if (state.currentLevel === 3) {
+                playSound(winSound);
+                showDeductionOptions();
+                return;
+            }
+            
+            // إخفاء أزرار الإجابة وإظهار خيارات أخذ النقاط أو المتابعة
+            answerControls.style.display = 'none';
+            choiceButtons.style.display = 'flex';
+            tempPointsValue.textContent = state.tempPoints;
+        }
+        
+        // معالجة الإجابة الخاطئة
+        function handleWrongAnswer() {
+            playSound(wrongSound);
+            
+            // التعديل هنا: تصفير النقاط المؤقتة فقط دون التأثير على النقاط الفعلية
+            state.tempPoints = 0;
+            
+            // تحديث عرض المجموعات
+            renderGroups();
+            
+            // الانتقال للمجموعة التالية
+            setTimeout(nextGroup, 800);
+        }
+        
+        // أخذ النقاط
+        function takePoints() {
+            playSound(pointsSound);
+            
+            // إضافة النقاط المؤقتة للمجموعة الحالية
+            state.groups[state.currentGroup].points += state.tempPoints;
+            
+            // تصفير النقاط المؤقتة
+            state.tempPoints = 0;
+            
+            // تحديث عرض المجموعات
+            renderGroups();
+            
+            // الانتقال للمجموعة التالية
+            nextGroup();
+        }
+        
+        // الانتقال للسؤال التالي
+        function nextQuestion() {
+            // زيادة مستوى السؤال الحالي
+            state.currentLevel++;
+            
+            // عرض السؤال الجديد
+            showCurrentQuestion();
+        }
+        
+        // عرض خيارات خصم النقاط
+        function showDeductionOptions() {
+            deductionValue.textContent = state.deductionPoints;
+            deductionOptions.innerHTML = '';
+            
+            // إخفاء أزرار التحكم
+            answerControls.style.display = 'none';
+            
+            // إنشاء خيارات للمجموعات (باستثناء المجموعة الحالية)
+            state.groups.forEach(group => {
+                if (group.id !== state.groups[state.currentGroup].id) {
+                    const button = document.createElement('button');
+                    button.className = 'btn deduction-btn';
+                    button.innerHTML = `<i class="fas fa-minus-circle"></i> ${group.name}`;
+                    button.addEventListener('click', () => {
+                        playSound(deductSound);
+                        
+                        // خصم النقاط من المجموعة المختارة (يمكن أن تصبح سالبة)
+                        group.points -= state.deductionPoints;
+                        
+                        // إضافة النقاط المؤقتة للمجموعة الحالية
+                        state.groups[state.currentGroup].points += state.tempPoints;
+                        
+                        // تصفير النقاط المؤقتة
+                        state.tempPoints = 0;
+                        
+                        // تحديث عرض المجموعات
+                        renderGroups();
+                        
+                        // إخفاء شاشة الخصم
+                        deductionScreen.style.display = 'none';
+                        
+                        // الانتقال للمجموعة التالية
+                        setTimeout(nextGroup, 800);
+                    });
+                    deductionOptions.appendChild(button);
+                }
+            });
+            
+            // عرض شاشة الخصم
+            deductionScreen.style.display = 'block';
+        }
+        
+        // الانتقال للمجموعة التالية
+        function nextGroup() {
+            // إعادة تعيين مستوى السؤال
+            state.currentLevel = 1;
+            state.tempPoints = 0;
+            
+            // الانتقال للمجموعة التالية
+            state.currentGroup = (state.currentGroup + 1) % state.groups.length;
+            
+            // تحديث عرض المجموعات
+            renderGroups();
+            
+            // عرض السؤال الجديد
+            showCurrentQuestion();
+        }
+        
+        // إدارة الأسئلة
+        function showQuestionsScreen() {
+            renderQuestionsList();
+            questionsScreen.classList.add('active');
+            setupScreen.classList.remove('active');
+            gameScreen.classList.remove('active');
+        }
+        
+        function showGameScreen() {
+            gameScreen.classList.add('active');
+            setupScreen.classList.remove('active');
+            questionsScreen.classList.remove('active');
+        }
+        
+        function showSetupScreen() {
+            setupScreen.classList.add('active');
+            gameScreen.classList.remove('active');
+            questionsScreen.classList.remove('active');
+        }
+        
+        // إضافة سؤال
+        function addQuestion() {
+            const questionText = document.getElementById('newQuestion').value.trim();
+            const level = document.getElementById('questionLevel').value;
+            
+            if (questionText) {
+                state.questions[level].push(questionText);
+                renderQuestionsList();
+                document.getElementById('newQuestion').value = '';
+            }
+        }
+        
+        // عرض قائمة الأسئلة
+        function renderQuestionsList() {
+            questionsList.innerHTML = '';
+            
+            for (let level = 1; level <= 3; level++) {
+                state.questions[level].forEach((question, index) => {
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'question-item';
+                    questionElement.innerHTML = `
+                        <div class="question-level-badge">المستوى ${level}</div>
+                        <div class="question-content">${question}</div>
+                        <button class="delete-btn" data-level="${level}" data-index="${index}">
+                            <i class="fas fa-trash-alt"></i> حذف
+                        </button>
+                    `;
+                    questionsList.appendChild(questionElement);
+                });
+            }
+            
+            // إضافة معالجات الأحداث لأزرار الحذف
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const level = this.getAttribute('data-level');
+                    const index = parseInt(this.getAttribute('data-index'));
+                    state.questions[level].splice(index, 1);
+                    renderQuestionsList();
+                });
+            });
+        }
+        
+        // تشغيل الصوت
+        function playSound(sound) {
+            if (state.soundEnabled) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("لم يتم تشغيل الصوت:", e));
+            }
+        }
+        
+        // تبديل الصوت
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            soundToggle.innerHTML = state.soundEnabled ? 
+                '<i class="fas fa-volume-up"></i>' : 
+                '<i class="fas fa-volume-mute"></i>';
+        }
+        
+        // تهيئة بعض الأسئلة الافتراضية
+        function initializeSampleQuestions() {
+           
+        }
+        
+        // تهيئة اللعبة عند التحميل
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeSampleQuestions();
+            generateGroupNameInputs();
+        });
+    </script>
+</body>
+</html>
